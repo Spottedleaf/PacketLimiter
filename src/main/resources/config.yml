@@ -1,0 +1,18 @@
+# PacketLimiter config
+# The defaults are targeted at preventing obvious packet spamming while allowing clients with significant network
+# issues to play
+
+# The interval to measure packets over
+# Lowering this value will limit peak packets from players which would target people with bad connections
+# Raising this value will allow higher peak packet rates, which will help with people who have poor connections
+interval: 7.0
+
+# The maximum maximum packets per second for players
+# It is measured over the configured interval
+max-packet-rate: 500.0
+
+# Message to display to clients who get kicked
+kick-message: "&cSent too many packets"
+
+# Configuration version, do not touch.
+config-version: 0

@@ -1,0 +1,6 @@
+main: ca.spottedleaf.packetlimiter.PacketLimiter
+version: "1.0.0"
+name: PacketLimiter
+author: Spottedleaf
+depend: [ProtocolLib]
+api-version: "1.13"

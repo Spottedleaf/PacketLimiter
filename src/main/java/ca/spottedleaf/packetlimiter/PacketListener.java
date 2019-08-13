@@ -5,6 +5,7 @@ import com.comphenix.protocol.events.ListenerOptions;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.injector.server.TemporaryPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,7 +63,13 @@ public final class PacketListener extends PacketAdapter implements Listener {
             return;
         }
 
-        final UUID targetUniqueId = event.getPlayer().getUniqueId();
+        final Player player = event.getPlayer();
+
+        if (player instanceof TemporaryPlayer || player == null) {
+            return; // we don't have UUID at this stage
+        }
+
+        final UUID targetUniqueId = player.getUniqueId();
         PlayerInfo info = this.playerPacketInfo.get(targetUniqueId);
 
         if (info == null) {
@@ -90,14 +97,14 @@ public final class PacketListener extends PacketAdapter implements Listener {
                 event.setCancelled(true);
 
                 Bukkit.getScheduler().runTask(this.plugin, () -> {
-                    final Player player = Bukkit.getPlayer(targetUniqueId);
-                    if (player == null) {
+                    final Player target = Bukkit.getPlayer(targetUniqueId);
+                    if (target == null) {
                         return;
                     }
 
-                    player.kickPlayer(this.kickMessage);
+                    target.kickPlayer(this.kickMessage);
                     this.plugin.getLogger().log(Level.WARNING, "Player {0} ({1}) was kicked for sending too many packets! {2} in the last {3} seconds",
-                            new Object[] {player.getName(), player.getUniqueId(), packets, ONE_DECIMAL_PLACE.format(bucket.intervalTime / 1000.0)});
+                            new Object[] {target.getName(), target.getUniqueId(), packets, ONE_DECIMAL_PLACE.format(bucket.intervalTime / 1000.0)});
                 });
             }
         }
